@@ -262,3 +262,38 @@ resource "azurerm_key_vault_secret" "storage_account_access_key" {
   value        = azurerm_storage_account.some_name_main_ljh_storage.primary_access_key
   key_vault_id = azurerm_key_vault.some_name_main.id
 }
+
+# Implement Azure Backup in Terraform
+
+#Create a Recovery Services Vault
+resource "azurerm_recovery_services_vault" "backup_vault" {
+  name                = "authorWebsiteBackupVault"
+  location            = azurerm_resource_group.some_name_main_ljh.location
+  resource_group_name = azurerm_resource_group.some_name_main_ljh.name
+  sku                 = "Standard"
+}
+
+# Create a Backup Policy for Blob Storage
+resource "azurerm_backup_policy_blob_storage" "backup_policy" {
+  name                = "dailyBackupPolicy"
+  resource_group_name = azurerm_resource_group.some_name_main_ljh.name
+  recovery_vault_name = azurerm_recovery_services_vault.backup_vault.name
+
+  retention_daily {
+    count    = 7
+  }
+
+  backup_schedule {
+    frequency = "Daily"
+    time      = "23:00"
+  }
+}
+
+# Configure Backup for Blob Storage
+resource "azurerm_backup_protected_storage_account" "backup_blob" {
+  resource_group_name = azurerm_resource_group.some_name_main.name
+  recovery_vault_name = azurerm_recovery_services_vault.backup_vault.name
+  storage_account_id  = azurerm_storage_account.some_name_main_storage.id
+  backup_policy_id    = azurerm_backup_policy_blob_storage.backup_policy.id
+}
+
