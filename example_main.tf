@@ -242,12 +242,13 @@ resource "azurerm_storage_blob" "author_example_promotion_email" {
   source                 = "path/to/your/promotion_email.html"
 }
 
-# Create an Azure Active Directory (AAD) User
+#Creating an Azure Active Directory (AAD) User
 resource "azuread_user" "security_admin" {
   user_principal_name = "securityadmin@yourdomain.com"
   display_name        = "Security Administrator"
   password            = "SomeSecurePassword"
 }
+
 
 # Assign Roles and Permissions
 resource "azurerm_role_assignment" "security_admin_role" {
@@ -256,12 +257,14 @@ resource "azurerm_role_assignment" "security_admin_role" {
   principal_id        = azuread_user.security_admin.object_id
 }
 
+
 # Secure Configuration in Terraform
 resource "azurerm_key_vault_secret" "storage_account_access_key" {
   name         = "storage-account-access-key"
   value        = azurerm_storage_account.some_name_main_ljh_storage.primary_access_key
   key_vault_id = azurerm_key_vault.some_name_main.id
 }
+
 
 # Implement Azure Backup in Terraform
 
@@ -291,7 +294,7 @@ resource "azurerm_backup_policy_blob_storage" "backup_policy" {
 
 # Configure Backup for Blob Storage
 resource "azurerm_backup_protected_storage_account" "backup_blob" {
-  resource_group_name = azurerm_resource_group.some_name_main_ljh.name
+  resource_group_name = azurerm_resource_group.some_name_main.name
   recovery_vault_name = azurerm_recovery_services_vault.backup_vault.name
   storage_account_id  = azurerm_storage_account.some_name_main_storage.id
   backup_policy_id    = azurerm_backup_policy_blob_storage.backup_policy.id
