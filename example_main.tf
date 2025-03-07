@@ -291,7 +291,7 @@ resource "azurerm_backup_policy_blob_storage" "backup_policy" {
 
 # Configure Backup for Blob Storage
 resource "azurerm_backup_protected_storage_account" "backup_blob" {
-  resource_group_name = azurerm_resource_group.some_name_main.name
+  resource_group_name = azurerm_resource_group.some_name_main_ljh.name
   recovery_vault_name = azurerm_recovery_services_vault.backup_vault.name
   storage_account_id  = azurerm_storage_account.some_name_main_storage.id
   backup_policy_id    = azurerm_backup_policy_blob_storage.backup_policy.id
